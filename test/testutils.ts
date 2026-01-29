@@ -11,9 +11,9 @@ import {
   EntryPoint__factory,
   IERC20,
   IEntryPoint,
-  SimpleAccount,
-  SimpleAccountFactory__factory,
-  SimpleAccount__factory, SimpleAccountFactory, TestAggregatedAccountFactory
+  SmartContractWallet,
+  SmartContractWalletFactory__factory,
+  SmartContractWallet__factory, SmartContractWalletFactory
 } from '../typechain'
 import { BytesLike } from '@ethersproject/bytes'
 import { expect } from 'chai'
@@ -93,16 +93,7 @@ export async function calcGasUsage (rcpt: ContractReceipt, entryPoint: EntryPoin
 }
 
 // helper function to create the initCode to deploy the account, using our account factory.
-export function getAccountInitCode (owner: string, factory: SimpleAccountFactory, salt = 0): BytesLike {
-  return hexConcat([
-    factory.address,
-    factory.interface.encodeFunctionData('createAccount', [owner, salt])
-  ])
-}
-
-export async function getAggregatedAccountInitCode (entryPoint: string, factory: TestAggregatedAccountFactory, salt = 0): Promise<BytesLike> {
-  // the test aggregated account doesn't check the owner...
-  const owner = AddressZero
+export function getAccountInitCode (owner: string, factory: SmartContractWalletFactory, salt = 0): BytesLike {
   return hexConcat([
     factory.address,
     factory.interface.encodeFunctionData('createAccount', [owner, salt])
@@ -110,7 +101,7 @@ export async function getAggregatedAccountInitCode (entryPoint: string, factory:
 }
 
 // given the parameters as AccountDeployer, return the resulting "counterfactual address" that it would create.
-export async function getAccountAddress (owner: string, factory: SimpleAccountFactory, salt = 0): Promise<string> {
+export async function getAccountAddress (owner: string, factory: SmartContractWalletFactory, salt = 0): Promise<string> {
   return await factory.getAddress(owner, salt)
 }
 
@@ -289,18 +280,18 @@ export async function createAccount (
   ethersSigner: Signer,
   accountOwner: string,
   entryPoint: string,
-  _factory?: SimpleAccountFactory
+  _factory?: SmartContractWalletFactory
 ):
   Promise<{
-    proxy: SimpleAccount
-    accountFactory: SimpleAccountFactory
+    proxy: SmartContractWallet
+    accountFactory: SmartContractWalletFactory
     implementation: string
   }> {
-  const accountFactory = _factory ?? await new SimpleAccountFactory__factory(ethersSigner).deploy(entryPoint)
+  const accountFactory = _factory ?? await new SmartContractWalletFactory__factory(ethersSigner).deploy(entryPoint)
   const implementation = await accountFactory.accountImplementation()
   await accountFactory.createAccount(accountOwner, 0)
   const accountAddress = await accountFactory.getAddress(accountOwner, 0)
-  const proxy = SimpleAccount__factory.connect(accountAddress, ethersSigner)
+  const proxy = SmartContractWallet__factory.connect(accountAddress, ethersSigner)
   return {
     implementation,
     accountFactory,

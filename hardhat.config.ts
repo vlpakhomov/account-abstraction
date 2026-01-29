@@ -25,11 +25,12 @@ function getNetwork (name: string): { url: string, accounts: { mnemonic: string 
 }
 
 const optimizedComilerSettings = {
-  version: '0.8.17',
+  version: '0.8.24',
   settings: {
     optimizer: { enabled: true, runs: 1000000 },
     viaIR: true
-  }
+  },
+  evmVersion: "cancun"
 }
 
 // You need to export an object to set up your config
@@ -38,10 +39,11 @@ const optimizedComilerSettings = {
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [{
-      version: '0.8.15',
+      version: '0.8.24',
       settings: {
-        optimizer: { enabled: true, runs: 1000000 }
-      }
+        optimizer: { enabled: true, runs: 1000000 },
+        evmVersion: "cancun"
+      },
     }],
     overrides: {
       'contracts/core/EntryPoint.sol': optimizedComilerSettings,

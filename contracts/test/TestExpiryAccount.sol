@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.12;
 
-import "../samples/SimpleAccount.sol";
+import "../core/Helpers.sol";
+import "../SmartContractWallet.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 /**
  * A test account, for testing expiry.
@@ -10,14 +13,15 @@ import "../samples/SimpleAccount.sol";
  * other things, like target contracts and methods to be called.
  * also, the "since" value is not really useful, only for testing the entrypoint.
  */
-contract TestExpiryAccount is SimpleAccount {
+contract TestExpiryAccount is SmartContractWallet {
+    using MessageHashUtils for bytes32;
     using ECDSA for bytes32;
 
     mapping(address => uint48) public ownerAfter;
     mapping(address => uint48) public ownerUntil;
 
     // solhint-disable-next-line no-empty-blocks
-    constructor(IEntryPoint anEntryPoint) SimpleAccount(anEntryPoint) {}
+    constructor(IEntryPoint anEntryPoint) SmartContractWallet(anEntryPoint) {}
 
     function initialize(address anOwner) public virtual override initializer {
         super._initialize(anOwner);

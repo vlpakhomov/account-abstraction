@@ -5,7 +5,7 @@ pragma solidity ^0.8.12;
 
 import "../interfaces/IAggregator.sol";
 import "../interfaces/IEntryPoint.sol";
-import "../samples/SimpleAccount.sol";
+import "../SmartContractWallet.sol";
 
 /**
  * test signature aggregator.

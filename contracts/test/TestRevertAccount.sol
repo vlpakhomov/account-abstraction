@@ -2,7 +2,10 @@
 pragma solidity ^0.8.12;
 /* solhint-disable no-inline-assembly */
 
-import "../samples/SimpleAccount.sol";
+import "../interfaces/IAccount.sol";
+import "../interfaces/IEntryPoint.sol";
+import "../SmartContractWallet.sol";
+
 contract TestRevertAccount is IAccount {
     IEntryPoint private ep;
     constructor(IEntryPoint _ep) payable {
